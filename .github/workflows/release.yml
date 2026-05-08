@@ -1,0 +1,38 @@
+name: Release ARM binary
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-arm64:
+    name: Build ARM64 Linux binary
+    runs-on: ubuntu-latest
+    env:
+      TARGET: aarch64-unknown-linux-musl
+      ARTIFACT_NAME: unspace-linux-arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ env.TARGET }}
+      - name: Build static ARM64 release binary
+        run: cargo build --release --locked --target "${TARGET}"
+      - name: Strip binary
+        run: llvm-strip "target/${TARGET}/release/unspace"
+      - name: Verify binary size
+        run: |
+          size_bytes=$(stat -c%s "target/${TARGET}/release/unspace")
+          max_bytes=$((5 * 1024 * 1024))
+          echo "unspace ARM64 size: ${size_bytes} bytes"
+          test "$size_bytes" -lt "$max_bytes"
+      - name: Package artifact
+        run: |
+          mkdir -p dist
+          cp "target/${TARGET}/release/unspace" "dist/${ARTIFACT_NAME}"
+          sha256sum "dist/${ARTIFACT_NAME}" > "dist/${ARTIFACT_NAME}.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: dist/*

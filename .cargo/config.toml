@@ -1,0 +1,7 @@
+[build]
+target-dir = "target"
+
+# Drone docks are ARM64 Linux devices. Keep release target config focused on
+# the architecture we actually deploy.
+[target.aarch64-unknown-linux-musl]
+linker = "rust-lld"

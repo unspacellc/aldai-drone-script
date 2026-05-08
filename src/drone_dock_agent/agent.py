@@ -33,7 +33,6 @@ logger = logging.getLogger(__name__)
 class AgentConfig:
     api_base_url: str
     api_key: str
-    yard_id: str
     watch_directory: Path
     mission_name_prefix: str
     include_extensions: tuple[str, ...]
@@ -70,7 +69,6 @@ class UnspaceAPIClient:
             "POST",
             UPLOAD_URL_PATH,
             json={
-                "yard_id": self._config.yard_id,
                 "filename": file_path.name,
                 "file_size": file_path.stat().st_size,
             },
@@ -343,7 +341,6 @@ def load_config() -> AgentConfig:
     return AgentConfig(
         api_base_url=str(raw_config["api_base_url"]).rstrip("/"),
         api_key=token,
-        yard_id=str(raw_config["yard_id"]).strip(),
         watch_directory=Path(str(raw_config["watch_directory"])).expanduser().resolve(),
         mission_name_prefix=str(raw_config.get("mission_name_prefix", "Hextronics Dock")),
         include_extensions=tuple(f".{str(value).lower().lstrip('.')}" for value in include_extensions),

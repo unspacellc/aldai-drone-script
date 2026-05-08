@@ -1,0 +1,10 @@
+{
+  "config_version": 1,
+  "api_base_url": "https://api.unspace.com",
+  "api_key": "",
+  "dock_id": "",
+  "watch_dir": "/var/lib/unspace/uploads",
+  "heartbeat_file": "/tmp/unspace.heartbeat",
+  "heartbeat_interval_secs": 15,
+  "heartbeat_max_age_secs": 120
+}
